@@ -1,0 +1,10 @@
+html(ng-app='myApp')
+  head
+    script(src='/js/angular.min.js')
+    script(src='/js/app.js')
+    title= title
+  body
+    h1= message
+    div(ng-controller='mainController')
+      input(ng-model='handle')
+      p {{ handle }}
