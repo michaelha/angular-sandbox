@@ -33,6 +33,11 @@ router.get('/test', function(req,res){
   res.render('test', { title: 'Hey', message: 'Hello there!' })
 });
 
+router.post('/test_post', function(req,res){
+  resObj = { firstname: 'john', lastname: 'doe' };
+  res.send( resObj);
+});
+
 
 io.on('connection', function (socket) {
     messages.forEach(function (data) {
