@@ -10,8 +10,22 @@ var async = require('async');
 var socketio = require('socket.io');
 var express = require('express');
 var haml = require('hamljs');
-
-
+var mongoose = require('mongoose');
+var mgdb = 'mongodb://test:test@ds129050.mlab.com:29050/nodetodosample';
+mongoose.connect(mgdb);
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function() {
+  // we're connected!
+});
+var kittySchema = mongoose.Schema({
+    name: String
+});
+var Kitten = mongoose.model('Kitten', kittySchema);
+var msgSchema = mongoose.Schema({
+  body: String
+});
+var Messages = mongoose.model('Messsages', msgSchema);
 
 //
 // ## SimpleServer `SimpleServer(obj)`
@@ -22,6 +36,10 @@ var haml = require('hamljs');
 var router = express();
 var server = http.createServer(router);
 var io = socketio.listen(server);
+
+var bodyParser = require('body-parser');
+router.use(bodyParser.json()); // support json encoded bodies
+router.use(bodyParser.urlencoded({ extended: true })); 
 
 router.use(express.static(path.resolve(__dirname, 'client')));
 var messages = [];
@@ -34,7 +52,13 @@ router.get('/test', function(req,res){
 });
 
 router.post('/test_post', function(req,res){
+  var firstname = req.body.first_name;
   resObj = { firstname: 'john', lastname: 'doe' };
+
+ var newMessage = new Messages({ body: firstname });
+newMessage.save();
+  
+   
   res.send( resObj);
 });
 
